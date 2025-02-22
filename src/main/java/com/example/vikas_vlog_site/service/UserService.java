@@ -16,5 +16,7 @@ public interface UserService {
 
     List<userDto> getAllUsers();
 
-    void deleteUser(Integer userId);
+    userDto deleteUser(Integer userId);
+
+    void deleteAllUser();
 }

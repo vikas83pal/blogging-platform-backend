@@ -3,6 +3,7 @@ package com.example.vikas_vlog_site.service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,9 @@ public class userImp implements UserService{
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public userDto createUser(userDto userDto) {
         User newUser = this.dtoToUser(userDto);
@@ -26,19 +30,22 @@ public class userImp implements UserService{
 
     @Override
     public userDto updateUser(userDto userDto, Integer userId) {
+        // Fetch user or throw exception if not found
         User user = this.userRepo.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
-
+            .orElseThrow(() -> new ResourceNotFoundException("User", "Id", userId));
+    
+        // Update fields (excluding ID)
         user.setName(userDto.getName());
         user.setAbout(userDto.getAbout());
         user.setEmail(userDto.getEmail());
-        user.setId(userDto.getId());
-
-        User updateUser = this.userRepo.save(user);
-        userDto userDto2 = this.userTodto(updateUser);
-        return userDto2;
-
+    
+        // Save updated user
+        User updatedUser = this.userRepo.save(user);
+    
+        // Convert entity to DTO
+        return this.userTodto(updatedUser);
     }
+    
 
     @Override
     public userDto getUserById(Integer userId) {
@@ -56,33 +63,29 @@ public class userImp implements UserService{
     }
 
     @Override
-    public void deleteUser(Integer userId) {
+    public userDto deleteUser(Integer userId) {
         User user = this.userRepo.findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User", " Id ", userId));
 
         this.userRepo.delete(user);
+        return this.userTodto(user);
 
+    }
+
+    @Override
+    public void deleteAllUser(){
+        this.userRepo.deleteAll();
     }
 
 
     private User dtoToUser(userDto userDto){
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        user.setAbout(userDto.getAbout());
-        user.setPassword(userDto.getPassword());
+        User user = this.modelMapper.map(userDto, User.class);
         return user;
     }
     
 
     private userDto userTodto(User user){
-        userDto userdto = new userDto();
-        userdto.setId(user.getId());
-        userdto.setName(user.getName());
-        userdto.setEmail(user.getEmail());
-        userdto.setPassword(user.getPassword());
-        userdto.setAbout(user.getAbout());
+        userDto userdto = this.modelMapper.map(user, userDto.class);
         return userdto;
     }
 }
