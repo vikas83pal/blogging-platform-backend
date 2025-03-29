@@ -17,17 +17,19 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class User {
+public class Catagory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private String name;
-    private String email;
-    private String password;
-    private String about;
+    private Integer catagoryId;
+    
+    private String categoryTitle;
+    private String categoryDesc;
+    
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private List<Post> posts = new ArrayList<>();
+
+    
 
 }
