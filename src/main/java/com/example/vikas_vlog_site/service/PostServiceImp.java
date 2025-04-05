@@ -5,9 +5,7 @@ import com.example.vikas_vlog_site.payload.postResponse;
 
 import java.sql.Date;
 import java.util.List;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
-
 import org.springframework.data.domain.Page;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.example.vikas_vlog_site.exception.ResourceNotFoundException;
 import com.example.vikas_vlog_site.model.Catagory;
 import com.example.vikas_vlog_site.model.Post;
@@ -123,12 +119,4 @@ public class PostServiceImp implements PostService {
             return postDtos;
         }
 
-        @Override
-        public  List<PostDto> searchPost(String keyword){
-            List<Post> posts = this.postRepo.findByTitleContaining(keyword);
-
-            List<PostDto> postDtos  = posts.stream().map((posts)-> this.modelMapper.map(posts, PostDto.class)).collect(Collectors.toList()));
-
-            return postDtos;
-        }
     }
